@@ -21,9 +21,9 @@ public class Block implements Comparable {
         this.hash = hash.toString();
     }
 
-    public Block(int index, String previousHash, String data) {
+    public Block(int index, String data) {
         this.index = index;
-        this.previousHash = previousHash.toString();
+        this.previousHash = null;
         this.timestamp = new Date();
         this.data = data;
         this.hash = Utils.calculateHash(index, previousHash, timestamp, data);

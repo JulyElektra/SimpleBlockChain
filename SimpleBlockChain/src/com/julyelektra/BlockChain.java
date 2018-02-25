@@ -8,12 +8,17 @@ import java.util.Date;
  * Meta class for storing block chain
  */
 public class BlockChain {
-    private ArrayList<Block> blockChain;
+    private ArrayList<Block> blocks;
 
+    /**
+     * Constructor for creation of block chain.
+     *
+     * @param data needed to create the first block in the chain
+     */
     public BlockChain(String data) {
-        this.blockChain = new ArrayList<>();
-        Block initialBlock = new Block(0, null, data);
-        blockChain.add(initialBlock);
+        this.blocks = new ArrayList<>();
+        Block initialBlock = new Block(0, data);
+        blocks.add(initialBlock);
     }
 
     /**
@@ -21,8 +26,8 @@ public class BlockChain {
      *
      * @return
      */
-    public Block getLast() {
-        return blockChain.get(blockChain.size() - 1);
+    private Block getLast() {
+        return blocks.get(blocks.size() - 1);
     }
 
     /**
@@ -33,8 +38,13 @@ public class BlockChain {
      */
     public Block generateBlock(String data) {
         Block newBlock = getNewBlock(data);
-        blockChain.add(newBlock);
-        return newBlock;
+        if (BlockChainValidator.isValidBlock(newBlock, getLast())) {
+            blocks.add(newBlock);
+            return newBlock;
+        } else {
+            System.out.println("You are trying to add invalid block into chain.");
+            return null;
+        }
     }
 
     /**
@@ -51,12 +61,8 @@ public class BlockChain {
         return new Block(nextIndex, latestBlock.getHash(), nextTimeStamp, data, nextHash);
     }
 
-    public ArrayList<Block> getBlockChain() {
-        return blockChain;
-    }
-
-    public void setBlockChain(ArrayList<Block> blockChain) {
-        this.blockChain = blockChain;
+    public ArrayList<Block> getAllBlocks() {
+        return blocks;
     }
 
     /**
@@ -65,11 +71,11 @@ public class BlockChain {
      * @param newBlocks
      */
     public void replaceChain(ArrayList<Block> newBlocks) {
-        if (BlockChainValidator.isValidChain(newBlocks) && newBlocks.size() > blockChain.size()) {
-            System.out.println("Received blockchain is valid. Replacing current blockchain with received blockchain");
-            blockChain = newBlocks;
+        if (BlockChainValidator.isValidChain(newBlocks) && newBlocks.size() > blocks.size()) {
+            System.out.println("Received blockchain is valid. Replacing current blockchain with received blockchain.");
+            blocks = newBlocks;
         } else {
-            System.out.println("Received blockchain invalid");
+            System.out.println("Received blockchain invalid.");
         }
     }
 }
